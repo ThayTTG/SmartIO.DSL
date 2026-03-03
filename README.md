@@ -1,13 +1,12 @@
 # SmartIO.DSL
+💜 **Created by Thayna Dias**
 
 A lightweight C++ mini-DSL designed to make common input/output operations simpler and more beginner-friendly.
 SmartIO does not change C++.
 It reduces boilerplate and helps new programmers focus on understanding how programs work instead of fighting syntax.
----
 
-## 💛 Author
-
-**Created by Thayna Dias (me ;P).**
+## 📦 Installation
+Clone the repository here: `git clone https://github.com/yourusername/SmartIO.DSL`
 
 ## ✨ Why SmartIO?
 
@@ -15,10 +14,6 @@ It reduces boilerplate and helps new programmers focus on understanding how prog
 - Makes code more readable;
 - Beginner-friendly abstraction;
 - Designed as a learning support tool.
----
-
-## 📦 Installation
-Clone the repository here: `git clone https://github.com/yourusername/SmartIO.DSL`
 
 ## 🚀 Core Functions
 
@@ -46,4 +41,4 @@ print("Hello! My name is", name, "! Nice to meet you ;P");
 
 SmartIO also includes simplified utilities for handling file operations, making it easier to read from and write to files without verbose syntax.
 (More details coming soon.)
----
+
