@@ -12,7 +12,7 @@ It reduces boilerplate and helps new programmers focus on understanding how prog
 - Designed as a learning support tool.
 
 ### 📦 Installation
-Clone the repository here: `git clone https://github.com/yourusername/SmartIO.DSL`
+Clone the repository here: `git clone https://github.com/ThayTTG/SmartIO.DSL.git`
 
 ### 🚀 Core Functions
 
