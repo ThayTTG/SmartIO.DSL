@@ -1,69 +1,71 @@
-🔧 Utility Functions
-fileExists(fs::path path)
+### 🔧 Utility Functions
+**fileExists()**
 
-Checks whether a given path exists in the filesystem.
-Returns true if the file or directory exists, otherwise false.
+_Checks whether a given path exists in the filesystem.
+Returns true if the file or directory exists, otherwise false._
 
-isDirectory(fs::path path)
+**isDirectory()**
 
-Determines whether the given path refers to a directory.
-Returns true if the path is a directory, otherwise false.
+_Determines whether the given path refers to a directory.
+Returns true if the path is a directory, otherwise false._
 
-🔄 Conversion Helpers
-toString(value)
+### 🔄 Conversion Helpers
 
-Converts a numeric value to a std::string using std::to_string.
+**toString()**
 
-toFloat(value)
+_Converts a numeric value to a std::string using std::to_string._
 
-Converts a string representation of a number into a float using std::stof.
+**toFloat()**
 
-toInt(value)
+_Converts a string representation of a number into a float using std::stof._
 
-Converts a string representation of a number into an int using std::stoi.
+**toInt()**
 
-toLongInt(value)
+_Converts a string representation of a number into an int using std::stoi._
 
-Converts a string representation of a number into an unsigned long long using std::stoull.
+**toLongInt()**
 
-🖨️ Console I/O
-print(Args... args)
+_Converts a string representation of a number into an unsigned long long using std::stoull._
 
-Prints multiple arguments to the standard output in a single line using fold expressions.
+### 🖨️ Console I/O
+**print()**
 
-error(Args... args)
+_Prints multiple arguments to the standard output in a single line using fold expressions._
 
-Prints multiple arguments to the standard error output in a single line.
+**error()**
 
-input(const std::string& message)
+_Prints multiple arguments to the standard error output in a single line._
 
-Displays a message to the user and captures a full line of input from standard input.
-Returns the entered string.
+**input()**
 
-📁 File & Filesystem Operations
-createFile(std::string path)
+_Displays a message to the user and captures a full line of input from standard input.
+Returns the entered string._
 
-Creates a new file at the specified path if it does not already exist.
-Displays a message indicating success or failure.
+### 📁 File & Filesystem Operations
 
-listFiles(std::filesystem::path& path)
+**createFile()**
 
-Lists all entries in the specified directory.
-Stores the entries internally and returns the total number of items found.
+_Creates a new file at the specified path if it does not already exist.
+Displays a message indicating success or failure._
 
-selectFile(std::filesystem::path path = std::filesystem::current_path())
+**listFiles()**
 
-Provides an interactive directory navigation system.
+_Lists all entries in the specified directory.
+Stores the entries internally and returns the total number of items found._
+
+**selectFile()**
+
+_Provides an interactive directory navigation system.
 Allows the user to move between directories and select a file or directory.
-Returns the selected path.
+Returns the selected path._
 
-request(std::string path, int lineRequested = -1)
+**request()**
 
-Reads content from a file.
+_Reads content from a file.
 If lineRequested is -1, returns the full content.
-Otherwise, returns only the specified line number.
+Otherwise, returns only the specified line number._
 
-send(std::string path, std::string value, bool isAppend = true)
+**send()**
 
-Writes data to a file.
-Appends or overwrites content depending on the isAppend flag.
+_Writes data to a file.
+Appends or overwrites content depending on the isAppend flag._
