@@ -1,30 +1,49 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 using string = std::string;
+std::vector<fs::directory_entry> entries;
 
-//Verify if a file exists and return a boolean (false or true)
-bool fileExists(string path) {return fs::exists(path);}
+// Verify if a file exists and return a boolean (false or true)
+bool fileExists(fs::path Path)
+{return fs::exists(Path);}
+bool isDirectory(fs::path Path)
+{ return fs::is_directory(Path);}
 
-//converts the value to String
-auto toString = [](auto value){return std::to_string(value);};
-//converts the value to Float
-auto toFloat = [](auto value){return std::stof(value);};
-//converts the value to Int
-auto toInt = [](auto value){return std::stoi(value);};
+// converts the value to String
+auto toString = [](auto value)
+{ return std::to_string(value); };
+// converts the value to Float
+auto toFloat = [](auto value)
+{ return std::stof(value); };
+// converts the value to Int
+auto toInt = [](auto value)
+{ return std::stoi(value); };
+auto toLongInt = [](auto value)
+{ return std::stoull(value); };
 
-// Prints and concatenates strings and variables in a single line. 
-template <typename... Args> 
-void print(Args... args) { (std::cout << ... << args) << std::endl; }
+// Prints and concatenates strings and variables in a single line.
+template <typename... Args>
+void print(Args... args)
+{
+    (std::cout << ... << args) << std::endl;
+}
 
-//Show a message, capture the line value and return them. 
+template <typename... Args>
+void error(Args... args)
+{
+    (std::cerr << ... << args) << std::endl;
+}
+
+// Show a message, capture the line value and return them.
 string input(const string &str)
 {
     // initializes variables and show to user the text typed.
-    string value, Default = "";
+    string value;
     std::cout << str << std::endl;
 
     // capture the value, and if nothing is typed, the code still running.
@@ -32,11 +51,11 @@ string input(const string &str)
     {
         return value;
     }
-    return Default;
+    return "";
 }
 
-//Create any type of value that is specified.
-void createFile(string &path)
+// Create any type of value that is specified.
+void createFile(string path)
 {
     if (!fileExists(path))
     {
@@ -46,64 +65,117 @@ void createFile(string &path)
     }
     else
     {
-        string overwrite = input("The file already exists. Would you like to overwrite it? (Y/N)");
-        while (true)
-        {
-            if (overwrite == "Y" || overwrite == "y")
-            {
-                std::ofstream file(path, std::ios::trunc);
-                file.close();
-                print("File '", path, "' overwrited with success.");
-                break;
-            }
-            else if (overwrite == "N" || overwrite == "n")
-            {
-                print("Ok, canceling creation process...");
-                break;
-            }
-            else
-            {
-                overwrite = input("ERROR: Invalid Input. Try Y or N to continue.");
-                continue;
-            }
-        }
+        error("The file already exists.");
     }
 }
 
-// request a value from another file. returnes naturally the value like a string.
-string request(string path, int lineRequested)
+size_t listFiles(fs::path& Path)
 {
-    std::ifstream file(path);
-    string line, result = "";
-    int currentLine = 1;
-
-    if (!file.is_open())
+    int i = 1;
+    entries.clear();
+    if(fileExists(Path) && isDirectory(Path))
     {
-        print("ERROR: file not found.");
-        string create = input(" Would you like to create one file with this name? Type Y or N.");
-        while (true)
+        for (auto &entry : fs::directory_iterator(Path))
         {
-            if (create == "Y" || create == "y")
-            {
-                print(result);
-                break;
-            }
-            else if (create == "N" || create == "n")
-            {
-                print("Oky. continuing the process...");
-                break;
-            }
-            else
-            {
-                print("ERROR: invalid input. Try Again.");
-                create = input("Type 'Y' or 'N': ");
-                continue;
-            }
+        // returns the value to the vector
+        entries.push_back(entry);
+        print("[", i++, "]", entry.path().filename().string());
+
+        if (entry.is_directory())
+        {
+            print("<DIR>");
+        }
+        print("\n");
         }
     }
     else
+    {   
+        error("ERROR: File does not exist.");
+        return 0;
+    }
+    return entries.size();
+}
+
+fs::path selectFile(fs::path Path = fs::current_path())
+{
+    while (true)
     {
-        print("File ", path, " found. Reading content...");
+        print("Current path: ", Path, "\n\n");
+        try
+        {
+            size_t entrySize = listFiles(Path);
+            if(entrySize == 0){break;}
+            print("\nType -1 to Return\n");
+            print("\nType 0 to chose the current directory");
+            print("\nOr type between 1 and ", entrySize, " to chose another directory\n");
+
+            int choice = toInt(input(""));
+
+            if (choice == -1)
+            {
+                Path = Path.parent_path();
+                print("Returning...");
+            }
+            else if (choice == 0)
+            {
+                if (!entries.empty())
+                {
+                    print("Current directory chosed with success.");
+                    return Path;
+                }
+                else
+                {
+                    print("Directory is empty.\n");
+                }
+            }
+            else if (choice >= 1 && static_cast<size_t>(choice - 1) <= entrySize)
+            {
+                if (entries[static_cast<size_t>(choice-1)].is_directory())
+                {
+                    Path = entries[static_cast<size_t>(choice-1)].path();
+                }
+                else
+                {
+                    return entries[static_cast<size_t>(choice-1)].path();
+                }
+            }
+            else
+            {
+                error("ERROR: Input Invalid.");
+                print("REMEMBER: type between 1 and ", entrySize, " to chose another directory\n");
+            }
+        }
+        catch (const fs::filesystem_error &e)
+        {
+            print("Access denied or invalid path.\n");
+            Path = Path.parent_path();
+        }
+    }
+    return Path;
+}
+
+// request a value from another file. returnes naturally the value like a string.
+string request(fs::path Path, int lineRequested = -1)
+{
+    
+    std::ifstream file(Path);
+    string line, result = "";
+    int currentLine = 1;
+
+    while(isDirectory(Path))
+    {
+        print("You selected a directory, but expected a file. Please, choose a file:");
+        Path = selectFile(Path);
+    }
+
+    if (!file.is_open())
+    {
+        error("ERROR: file not found.");
+        return "";
+    }
+    else
+    {
+        print("File ", Path, " found. Reading content...");
     }
 
     // while is possible to get the file path and
@@ -125,16 +197,14 @@ string request(string path, int lineRequested)
     // if the line requested does'nt exists, the program send an error message.
     if (lineRequested > 0 && result == "")
     {
-        print("WARNING: line", lineRequested, " is out of range.");
+        error("WARNING: line", lineRequested, " is out of range.");
     }
     return result;
 }
 
-
 void send(string path, string value, bool isAppend = true)
 {
     auto mode = isAppend ? std::ios::app : std::ios::trunc;
-    int count = 0;
 
     while (true)
     {
@@ -149,29 +219,9 @@ void send(string path, string value, bool isAppend = true)
             print("Data sent to '", path, "' with success.");
             break;
         }
-        else if (count < 2)
-        {
-            print("ERROR: Could not write to '", path, "'. Maybe you named it wrong?\n\n");
-            path = input("Put the file's name again: ");
-            count++;
-        }
         else
         {
-            print("FAIL: Could not write to '", path, "'. If the error percists, try restarting the program.");
-            break;
+            error("ERROR: Could not write to '", path, "'");
         }
     }
 }
-
-string matchFile()
-{
-    string line = "";
-    return line;
-}
-
-/*
-string access(string path)
-{
-    std::ofstream file()
-}
-*/
